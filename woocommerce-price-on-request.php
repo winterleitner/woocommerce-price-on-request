@@ -13,6 +13,18 @@ Author URI: https://winterleitner.github.com
 License: MIT
 */
 
+if(!function_exists("array_any")) {
+    function array_any(array $array, callable $fn)
+    {
+        foreach ($array as $value) {
+            if ($fn($value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
 function is_anfrage_product($product = null)
 {
     if ($product == null) global $product;

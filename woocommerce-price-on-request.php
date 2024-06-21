@@ -7,7 +7,7 @@
 Plugin Name: Woocommerce Price On Request
 Plugin URI: https://github.com/winterleitner/woocommerce-price-on-request
 Description: A Wordpress plugin that allows you to hide the price of a product and display a "Price on request" message instead.
-Version: 1.0
+Version: 1.0.1
 Author: Felix Winterleitner
 Author URI: https://winterleitner.github.com
 License: MIT
@@ -29,7 +29,14 @@ function is_anfrage_product($product = null)
 {
     if ($product == null) global $product;
     // Only apply to products with a price of 0 or null
-    if (!$product || ($product->get_price() != 0)) return false;
+    $type = gettype($product) == "object" ? get_class($product) : gettype($product);
+    $compatible = str_starts_with($type, "WC_Product");
+    /*if (!$compatible) {
+        error_log("Incompatible product type: " . $type);
+        error_log(print_r($type, TRUE));
+        error_log(print_r($product, TRUE));
+    }*/
+    if (!$product || !$compatible || $product->get_price() != 0) return false;
     try {
         // Get tag IDs
         $tag_ids = $product->get_tag_ids();
@@ -162,6 +169,7 @@ function redirect_to_cart_script() {
 }
 add_action('wp_enqueue_scripts', 'redirect_to_cart_script');
 
+/*
 function customize_mini_cart_text_script()
 {
     ?>
@@ -181,3 +189,4 @@ function customize_mini_cart_text_script()
 }
 
 add_action('wp_footer', 'customize_mini_cart_text_script');
+*/
